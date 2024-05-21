@@ -11,23 +11,40 @@ const brute = new PointSET();
 const kdTree = new KDTree();
 
 const points = [
-    new Point2D(0.372, 0.497),
-    new Point2D(0,0),
-    new Point2D(0.564, 0.413),
-    new Point2D(0.226, 0.577),
-    new Point2D(0.144, 0.179),
-    new Point2D(0.083, 0.510),
-    new Point2D(0.320, 0.708),
-    new Point2D(0.4444, 0.333),
-    new Point2D(0.862, 0.825),
-    new Point2D(0.888, 0.888),
-    new Point2D(0.999, 0.999)
+  new Point2D(0.372, 0.497),
+  new Point2D(0, 0),
+  new Point2D(0.564, 0.413),
+  new Point2D(0.226, 0.577),
+  new Point2D(0.144, 0.179),
+  new Point2D(0.083, 0.510),
+  new Point2D(0.320, 0.708),
+  new Point2D(0.4444, 0.333),
+  new Point2D(0.862, 0.825),
+  new Point2D(0.888, 0.888),
+  new Point2D(0.999, 0.999)
 ];
 
+console.time("PointSET Insertion");
 for (let point of points) {
-    brute.insert(point);
-    kdTree.insert(point);
+  brute.insert(point);
 }
+console.timeEnd("PointSET Insertion");
+
+console.time("KDTree Insertion");
+for (let point of points) {
+  kdTree.insert(point);
+}
+console.timeEnd("KDTree Insertion");
+
+const rect = new RectHV(0.1, 0.1, 0.6, 0.6);
+
+console.time("PointSET Range Search");
+let bruteResults = brute.range(rect);
+console.timeEnd("PointSET Range Search");
+
+console.time("KDTree Range Search");
+let kdTreeResults = kdTree.range(rect);
+console.timeEnd("KDTree Range Search");
 
 let x0 = 0.0, y0 = 0.0;      // initial endpoint of rectangle
 let x1 = 0.0, y1 = 0.0;      // current location of mouse
@@ -42,29 +59,29 @@ let sketch = function (p) {
     p.createCanvas(width, height);
   };
 
-  p.mousePressed = function() {
+  p.mousePressed = function () {
     if (!dragging) {
-        x0 = (p.mouseX - padding) / (height - padding - 5);
-        y0 = (p.mouseY - height + padding - 20) / (-height + padding + 5);
+      x0 = (p.mouseX - padding) / (height - padding - 5);
+      y0 = (p.mouseY - height + padding - 20) / (-height + padding + 5);
     }
     x1 = (p.mouseX - padding) / (height - padding - 5);
     y1 = (p.mouseY - height + padding - 20) / (-height + padding + 5);
   }
 
-  p.mouseDragged = function() {
+  p.mouseDragged = function () {
     if (!dragging) {
-        dragging = true;
+      dragging = true;
     }
     x1 = (p.mouseX - padding) / (height - padding - 5);
     y1 = (p.mouseY - height + padding - 20) / (-height + padding + 5);
   }
 
-  p.mouseReleased = function() {
+  p.mouseReleased = function () {
     dragging = false;
   }
 
   p.draw = function () {
-    console.log(x0,x1,y0,y1);
+    // console.log(x0, x1, y0, y1);
     p.clear();
 
     p.translate(0, 0)
@@ -81,26 +98,31 @@ let sketch = function (p) {
     p.stroke("black");
     brute.draw(p);
 
-    // // draw the rectangle
+    // draw the rectangle
     const rect = new RectHV(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1));
     p.strokeWeight(4 / height / 5);
     rect.draw(p);
 
     // draw the range search results for brute-force data structure in red
-    // p.stroke("red");
-    // p.strokeWeight(12 / height);
-    // for (let point of brute.range(rect)) {
-    //     point.draw(p);
-    // }
+    p.stroke("red");
+    p.strokeWeight(12 / height);
+    for (let point of brute.range(rect)) {
+      point.draw(p);
+    }
 
     // draw the range search results for kd-tree in green
     p.strokeWeight(8 / height);
     p.stroke("green");
     for (let point of kdTree.range(rect)) {
-        point.draw(p);
+      point.draw(p);
     }
+    console.time("PointSET Range Search");
+    let bruteResults = brute.range(rect);
+    console.timeEnd("PointSET Range Search");
 
-    // StdDraw.pause(20);
+    console.time("KDTree Range Search");
+    let kdTreeResults = kdTree.range(rect);
+    console.timeEnd("KDTree Range Search");
   }
 };
 
