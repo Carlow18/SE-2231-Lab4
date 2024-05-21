@@ -12,15 +12,16 @@ const kdTree = new KDTree();
 
 const points = [
     new Point2D(0.372, 0.497),
+    new Point2D(0,0),
     new Point2D(0.564, 0.413),
     new Point2D(0.226, 0.577),
     new Point2D(0.144, 0.179),
     new Point2D(0.083, 0.510),
     new Point2D(0.320, 0.708),
-    new Point2D(0.417, 0.362),
+    new Point2D(0.4444, 0.333),
     new Point2D(0.862, 0.825),
-    new Point2D(0.785, 0.725),
-    new Point2D(0.499, 0.208)
+    new Point2D(0.888, 0.888),
+    new Point2D(0.999, 0.999)
 ];
 
 for (let point of points) {
